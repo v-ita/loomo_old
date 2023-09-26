@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -45,6 +46,10 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        $cart = new Cart();
+        $cart->user()->associate($user);
+        $cart->save();
+        
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
