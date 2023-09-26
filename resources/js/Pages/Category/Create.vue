@@ -1,20 +1,23 @@
 <script setup>
 import InputError from '@/Components/InputError.vue';
+import Checkbox from '@/Components/Checkbox.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import Textarea from '@/Components/Textarea.vue';
 import { useForm, Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import useSlugify from '@/Composables/useSlugify'
 import { watch } from 'vue'
 
+const props = defineProps({
+    categories: Object
+})
+
 const form = useForm({
     name: '',
     slug: '',
-    description: '',
-    stock_quantity: '',
-    unit_price: '',
+    enabled: false,
+    parent_id: ''
 });
 
 // Auto-slugifying watcher
@@ -27,7 +30,7 @@ watch(
 )
 
 const submit = () => {
-    form.post(route('products.store'));
+    form.post(route('categories.store'));
 };
 </script>
 
@@ -36,15 +39,23 @@ const submit = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Create Product</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Create category</h2>
         </template>
 
         <div class="py-12">
             <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <form @submit.prevent="submit" class="mt-6 space-y-6">
+                    <div v-if="categories.length">
+                        <InputLabel for="parent_id" value="Parent" />
+                        <select name="parent_id" id="parent_id" v-model="form.parent_id" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                            <option v-for="category in categories" :key="category.id" :value="category.id" v-text="category.name"></option>
+                        </select>
+                        <InputError :message="form.errors.parent_id" class="mt-2" />
+                    </div>
                     <div>
                         <InputLabel for="name" value="Name" />
-                        <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" autocomplete="name"/>
+                        <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full"
+                            autocomplete="name" />
                         <InputError :message="form.errors.name" class="mt-2" />
                     </div>
 
@@ -54,22 +65,11 @@ const submit = () => {
                         <InputError :message="form.errors.slug" class="mt-2" />
                     </div>
 
-                    <div>
-                        <InputLabel for="description" value="Description" />
-                        <Textarea id="description" v-model="form.description" type="text" class="mt-1 block w-full" />
-                        <InputError :message="form.errors.description" class="mt-2" />
-                    </div>
-
-                    <div>
-                        <InputLabel for="stock_quantity" value="Stock quantity" />
-                        <TextInput id="stock_quantity" v-model="form.stock_quantity" type="numeric" class="mt-1 block w-full text-center p-2" />
-                        <InputError :message="form.errors.stock_quantity" class="mt-2" />
-                    </div>
-
-                    <div>
-                        <InputLabel for="unit_price" value="Unit price" />
-                        <TextInput id="unit_price" v-model="form.unit_price" type="numeric" class="mt-1 block w-full text-center p-2" />
-                        <InputError :message="form.errors.unit_price" class="mt-2" />
+                    <div class="block mt-4">
+                        <label class="flex items-center">
+                            <Checkbox name="enabled" v-model:checked="form.enabled" />
+                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Enabled</span>
+                        </label>
                     </div>
 
                     <PrimaryButton :disabled="form.processing" type="submit">Save</PrimaryButton>
