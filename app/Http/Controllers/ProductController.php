@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
+use App\Models\Currency;
 use App\Models\Product;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -15,7 +16,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Product/Create');
+        return Inertia::render('Product/Create', [
+            "currencies" => Currency::where('enabled', true)->get()
+        ]);
     }
 
     /**
@@ -26,7 +29,13 @@ class ProductController extends Controller
         $validated = $request->validated();
 
         $product = new Product($validated);
+
         $product->createdBy()->associate(User::find(auth()->id()));
+        if (isset($validated['currency_id'])) {
+			$currency = Currency::find($validated['currency_id']);
+			$product->currency()->associate($currency);
+		}
+
         $product->save();
 
         return redirect()->route(RouteServiceProvider::HOME);

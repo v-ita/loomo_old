@@ -31,11 +31,12 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'created_by' => ['nullable', 'integer', 'exists:App\Models\User,id'],
-
+            'currency_id' => ['nullable', 'integer', 'exists:App\Models\Currency,id'],
+            
             'name' => ['bail', 'string', 'required', 'max:255'],
             'slug' => ['bail', 'string', 'required', 'max:255', 'unique:products'],
             'description' => ['nullable', 'string'],
-
+            
             'stock_quantity' => ['nullable', 'integer', 'min:0'],
             'unit_price' => ['nullable', 'decimal:0,2', 'min:0'],
 

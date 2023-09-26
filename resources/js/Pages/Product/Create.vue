@@ -9,12 +9,17 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import useSlugify from '@/Composables/useSlugify'
 import { watch } from 'vue'
 
+const props = defineProps({
+    currencies: Object
+})
+
 const form = useForm({
     name: '',
     slug: '',
     description: '',
     stock_quantity: '',
     unit_price: '',
+    currency_id: '',
 });
 
 // Auto-slugifying watcher
@@ -70,6 +75,14 @@ const submit = () => {
                         <InputLabel for="unit_price" value="Unit price" />
                         <TextInput id="unit_price" v-model="form.unit_price" type="numeric" class="mt-1 block w-full text-center p-2" />
                         <InputError :message="form.errors.unit_price" class="mt-2" />
+                    </div>
+
+                    <div v-if="currencies.length">
+                        <InputLabel for="currency_id" value="Currency" />
+                        <select name="currency_id" id="currency_id" v-model="form.currency_id" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                            <option v-for="currency in currencies" :key="currency.id" :value="currency.id" v-text="currency.name"></option>
+                        </select>
+                        <InputError :message="form.errors.currency_id" class="mt-2" />
                     </div>
 
                     <PrimaryButton :disabled="form.processing" type="submit">Save</PrimaryButton>
