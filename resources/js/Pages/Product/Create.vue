@@ -11,7 +11,8 @@ import { watch } from 'vue'
 
 const props = defineProps({
     currencies: Object,
-    categories: Object
+    categories: Object,
+    stores: Object,
 })
 
 const form = useForm({
@@ -22,6 +23,7 @@ const form = useForm({
     unit_price: '',
     currency_id: '',
     category_id: '',
+    store_id: '',
 });
 
 // Auto-slugifying watcher
@@ -55,6 +57,14 @@ const submit = () => {
                             <option v-for="category in categories" :key="category.id" :value="category.id" v-text="category.name"></option>
                         </select>
                         <InputError :message="form.errors.category_id" class="mt-2" />
+                    </div>
+
+                    <div v-if="stores.length">
+                        <InputLabel for="store_id" value="Store" />
+                        <select name="store_id" id="store_id" v-model="form.store_id" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                            <option v-for="store in stores" :key="store.id" :value="store.id" v-text="store.name"></option>
+                        </select>
+                        <InputError :message="form.errors.store_id" class="mt-2" />
                     </div>
 
                     <div>
