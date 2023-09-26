@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
+use App\Models\Category;
 use App\Models\Currency;
 use App\Models\Product;
 use App\Models\User;
@@ -17,7 +18,8 @@ class ProductController extends Controller
     public function create()
     {
         return Inertia::render('Product/Create', [
-            "currencies" => Currency::where('enabled', true)->get()
+            "currencies" => Currency::where('enabled', true)->get(),
+            "categories" => Category::where('enabled', true)->get()
         ]);
     }
 
@@ -34,6 +36,10 @@ class ProductController extends Controller
         if (isset($validated['currency_id'])) {
 			$currency = Currency::find($validated['currency_id']);
 			$product->currency()->associate($currency);
+		}
+        if (isset($validated['category_id'])) {
+			$category = Category::find($validated['category_id']);
+			$product->category()->associate($category);
 		}
 
         $product->save();

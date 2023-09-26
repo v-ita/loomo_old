@@ -32,6 +32,7 @@ class StoreProductRequest extends FormRequest
         return [
             'created_by' => ['nullable', 'integer', 'exists:App\Models\User,id'],
             'currency_id' => ['nullable', 'integer', 'exists:App\Models\Currency,id'],
+            'category_id' => ['nullable', 'integer', 'exists:App\Models\Category,id'],
             
             'name' => ['bail', 'string', 'required', 'max:255'],
             'slug' => ['bail', 'string', 'required', 'max:255', 'unique:products'],
