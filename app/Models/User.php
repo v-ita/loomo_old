@@ -43,6 +43,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function products()
+	{
+		return $this->hasMany(Product::class, 'created_by');
+	}
+
     public function stores()
 	{
 		return $this->hasMany(Store::class, 'created_by');
