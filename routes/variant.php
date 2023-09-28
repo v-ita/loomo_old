@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AttributeValueController;
+use App\Http\Controllers\VariantAttributeController;
 use App\Http\Controllers\VariantController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,4 +19,9 @@ Route::controller(AttributeController::class)->middleware('auth')->name('attribu
 Route::controller(AttributeValueController::class)->middleware('auth')->name('attributes.values.')->group(function () {
 	Route::get('/attributes/values/create', 'create')->name('create');
 	Route::post('/attributes/{attribute}/values', 'store')->name('store');
+});
+
+Route::controller(VariantAttributeController::class)->middleware('auth')->name('variants.attributes.')->group(function () {
+	Route::get('/variants/attributes/create', 'create')->name('create');
+	Route::post('/variants/{variant}/attributes', 'store')->name('store');
 });
