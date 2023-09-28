@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Variant;
 use App\Providers\RouteServiceProvider;
 use Inertia\Inertia;
 
@@ -19,7 +20,8 @@ class CartItemController extends Controller
     {
         return Inertia::render('Cart/Item/Create', [
             'carts' => Cart::all(),
-            'products' => Product::all()
+            'products' => Product::all(),
+            'variants' => Variant::with('product')->get()
         ]);
     }
 
@@ -35,6 +37,9 @@ class CartItemController extends Controller
         if (isset($validated['product_id'])) {
 			$product = Product::find($validated['product_id']);
             $cartItem->cartItemAble()->associate($product);
+		} else if (isset($validated['variant_id'])) {
+			$variant = Variant::find($validated['variant_id']);
+            $cartItem->cartItemAble()->associate($variant);
 		}
         $cartItem->createdBy()->associate(User::find(auth()->id()));
 

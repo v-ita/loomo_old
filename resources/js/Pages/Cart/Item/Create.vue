@@ -5,17 +5,23 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm, Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Checkbox from '@/Components/Checkbox.vue';
+import { ref } from 'vue';
 
 const props = defineProps({
     products: Object,
-    carts: Object
+    variants: Object,
+    carts: Object,
 })
 
 const form = useForm({
     quantity: '',
     product_id: '',
+    variant_id: '',
     cart_id: ''
 });
+
+var addProduct = ref(true)
 
 const submit = () => {
     form.post(route('carts.items.store', {
@@ -43,12 +49,27 @@ const submit = () => {
                         <InputError :message="form.errors.cart_id" class="mt-2" />
                     </div>
 
-                    <div v-if="products.length">
+                    <div class="block mt-4">
+                        <label class="flex items-center">
+                            <Checkbox name="enabled" v-model:checked="addProduct" />
+                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Add product</span>
+                        </label>
+                    </div>
+
+                    <div v-if="products.length && addProduct">
                         <InputLabel for="product_id" value="Product" />
                         <select name="product_id" id="product_id" v-model="form.product_id" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                             <option v-for="product in products" :key="product.id" :value="product.id" v-text="product.name"></option>
                         </select>
                         <InputError :message="form.errors.product_id" class="mt-2" />
+                    </div>
+                    
+                    <div v-if="variants.length && !addProduct">
+                        <InputLabel for="variant_id" value="Variant" />
+                        <select name="variant_id" id="variant_id" v-model="form.variant_id" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                            <option v-for="variant in variants" :key="variant.id" :value="variant.id" v-text="variant.product.name + ' -> ' + variant.id"></option>
+                        </select>
+                        <InputError :message="form.errors.variant_id" class="mt-2" />
                     </div>
 
                     <div>
