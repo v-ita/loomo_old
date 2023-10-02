@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\User;
+use App\Models\Wishlist;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -46,9 +47,15 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // Create cart
         $cart = new Cart();
         $cart->user()->associate($user);
         $cart->save();
+
+        // Create wishlist
+        $wishlist = new Wishlist();
+        $wishlist->user()->associate($user);
+        $wishlist->save();
         
         Auth::login($user);
 
