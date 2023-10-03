@@ -22,7 +22,8 @@ class StoreWishlistItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => ['required', 'integer', 'exists:App\Models\Product,id'],
+            'product_id' => ['nullable', 'required_without:variant_id', 'integer', 'exists:App\Models\Product,id'],
+            'variant_id' => ['nullable', 'required_without:product_id', 'integer', 'exists:App\Models\Variant,id'],
         ];
     }
 }

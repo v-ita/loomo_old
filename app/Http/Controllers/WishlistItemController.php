@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreWishlistItemRequest;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Variant;
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
 use App\Providers\RouteServiceProvider;
@@ -20,6 +21,7 @@ class WishlistItemController extends Controller
         return Inertia::render('Wishlist/Item/Create', [
             'wishlists' => Wishlist::all(),
             'products' => Product::all(),
+            'variants' => Variant::with('product')->get()
         ]);
     }
 
@@ -33,8 +35,13 @@ class WishlistItemController extends Controller
         
         $wishlistItem->wishlist()->associate($wishlist);
         $wishlistItem->createdBy()->associate(User::find(auth()->id()));
-        $product = Product::find($validated['product_id']);
-        $wishlistItem->wishlistItemAble()->associate($product);
+        if (isset($validated['product_id'])) {
+            $product = Product::find($validated['product_id']);
+            $wishlistItem->wishlistItemAble()->associate($product);
+        } else if (isset($validated['variant_id'])) {
+            $variant = Variant::find($validated['variant_id']);
+            $wishlistItem->wishlistItemAble()->associate($variant);
+        }
 
         $wishlistItem->save();
         return redirect()->route(RouteServiceProvider::HOME);
