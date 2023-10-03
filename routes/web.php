@@ -43,3 +43,4 @@ require __DIR__.'/currency.php';
 require __DIR__.'/variant.php';
 require __DIR__.'/cart.php';
 require __DIR__.'/order.php';
+require __DIR__.'/wishlist.php';
